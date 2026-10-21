@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Losowanie warunku badania</title>
+</head>
+<body>
+    <p>Przekierowuję do formularza badania...</p>
+
+    <script>
+        // Linki do wypełniania formularzy (nie linki /edit).
+        const links = [
+            "https://docs.google.com/forms/d/1H5PLfZuVbpSOO6iCOmmSmJLJaKlydsLW4SadLnMstDI/viewform",
+            "https://docs.google.com/forms/d/1bwSmYGd7jtDq3jAJna5CEhBiNweqzrV5k9umaZeyzeA/viewform",
+            "https://docs.google.com/forms/d/11O9A7lRcQBAbjsISwNrO8fM2ikY06bYduCu7acQXCOY/viewform",
+            "https://docs.google.com/forms/d/19_yqSlao0nI2okH17qYi7DTZhyugw6_mSU2iW7CKxHA/viewform"
+        ];
+
+        const storageKey = "badanie_wylosowany_warunek_v1";
+        let savedIndex = null;
+
+        // Odczytaj poprzedni przydział z tej samej przeglądarki.
+        try {
+            const savedValue = localStorage.getItem(storageKey);
+            if (savedValue !== null) {
+                const parsed = Number(savedValue);
+                if (Number.isInteger(parsed) && parsed >= 0 && parsed < links.length) {
+                    savedIndex = parsed;
+                }
+            }
+        } catch (error) {
+            // Jeśli przeglądarka blokuje localStorage, skrypt nadal może losować,
+            // ale nie będzie mógł trwale zapamiętać przydziału.
+        }
+
+        // Wylosuj tylko wtedy, gdy nie ma zapisanego przydziału.
+        if (savedIndex === null) {
+            savedIndex = Math.floor(Math.random() * links.length);
+            try {
+                localStorage.setItem(storageKey, String(savedIndex));
+            } catch (error) {
+                // Zapisywanie może być zablokowane przez ustawienia przeglądarki.
+            }
+        }
+
+        window.location.replace(links[savedIndex]);
+    </script>
+</body>
+</html>
